@@ -1,13 +1,13 @@
 {
   "files": {
-    "main.css": "/pagospin/static/css/main.a2e7d79c.css",
-    "main.js": "/pagospin/static/js/main.ca4a283f.js",
+    "main.css": "/pagospin/static/css/main.9c9164bb.css",
+    "main.js": "/pagospin/static/js/main.e72698d7.js",
     "index.html": "/pagospin/index.html",
-    "main.a2e7d79c.css.map": "/pagospin/static/css/main.a2e7d79c.css.map",
-    "main.ca4a283f.js.map": "/pagospin/static/js/main.ca4a283f.js.map"
+    "main.9c9164bb.css.map": "/pagospin/static/css/main.9c9164bb.css.map",
+    "main.e72698d7.js.map": "/pagospin/static/js/main.e72698d7.js.map"
   },
   "entrypoints": [
-    "static/css/main.a2e7d79c.css",
-    "static/js/main.ca4a283f.js"
+    "static/css/main.9c9164bb.css",
+    "static/js/main.e72698d7.js"
   ]
 }
