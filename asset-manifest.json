@@ -1,0 +1,13 @@
+{
+  "files": {
+    "main.css": "/pagospin/static/css/main.a2e7d79c.css",
+    "main.js": "/pagospin/static/js/main.ca4a283f.js",
+    "index.html": "/pagospin/index.html",
+    "main.a2e7d79c.css.map": "/pagospin/static/css/main.a2e7d79c.css.map",
+    "main.ca4a283f.js.map": "/pagospin/static/js/main.ca4a283f.js.map"
+  },
+  "entrypoints": [
+    "static/css/main.a2e7d79c.css",
+    "static/js/main.ca4a283f.js"
+  ]
+}
