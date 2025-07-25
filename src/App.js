@@ -3,7 +3,7 @@ import { v4 as uuidv4 } from "uuid";
 import emailjs from "@emailjs/browser";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
-import "./style.css";
+import "./styles.css";
 
 pdfMake.vfs = pdfFonts.vfs;
 
