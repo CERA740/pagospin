@@ -106,7 +106,7 @@ const App = () => {
     transferencia_numero: transferencia.numero,
     transferencia_monto: transferencia.monto,
     mensaje_pines,
-    to_email: cliente.email,  // Esto debe coincidir con el placeholder {{to_email}} en plantilla
+    email: cliente.email,  // Esto debe coincidir con el placeholder {{to_email}} en plantilla
     subject: "Entrega de PINes y Factura - CERA",
   };
 
