@@ -98,32 +98,34 @@ const App = () => {
     pdfMake.createPdf(docDefinition).download("factura.pdf");
   };
 
-  const enviarEmail = (pins) => {
+  const enviarEmail = (pins, cliente, transferencia) => {
   const mensaje_pines = pins.map((p) => `${p.descripcion}: ${p.pin}`).join("\n");
+
   const templateParams = {
     cliente_cuit: cliente.cuit,
     cliente_razon_social: cliente.razonSocial,
     transferencia_numero: transferencia.numero,
     transferencia_monto: transferencia.monto,
     mensaje_pines,
-    email: cliente.email,  // Esto debe coincidir con el placeholder {{to_email}} en plantilla
+    email: cliente.email, // ✅ Coincide con {{email}} en EmailJS
     subject: "Entrega de PINes y Factura - CERA",
   };
 
   emailjs
     .send(
-      "service_xled59w",
-      "template_aa8945a",
+      "service_xled59w",         // ID de tu servicio
+      "template_aa8945a",        // ID de tu plantilla
       templateParams,
-      "M88IV6dUU6NMq6Ood"
+      "M88IV6dUU6NMq6Ood"        // Tu Public API Key
     )
     .then(
       (result) => {
         alert("Email enviado correctamente");
+        console.log("EmailJS result:", result.text);
       },
       (error) => {
         alert("Error al enviar el email");
-        console.error(error);
+        console.error("EmailJS error:", error);
       }
     );
 };
