@@ -99,34 +99,34 @@ const App = () => {
   };
 
   const enviarEmail = (pins) => {
-    const mensaje_pines = pins.map((p) => `${p.descripcion}: ${p.pin}`).join("\n");
-    const templateParams = {
-      cliente_cuit: cliente.cuit,
-      cliente_razon_social: cliente.razonSocial,
-      transferencia_numero: transferencia.numero,
-      transferencia_monto: transferencia.monto,
-      mensaje_pines,
-      to_email: cliente.email,
-      subject: "Entrega de PINes y Factura - CERA",
-    };
-
-    emailjs
-      .send(
-        "service_xled59w",
-        "template_aa8945a",
-        templateParams,
-        "M88IV6dUU6NMq6Ood"
-      )
-      .then(
-        (result) => {
-          alert("Email enviado correctamente");
-        },
-        (error) => {
-          alert("Error al enviar el email");
-          console.error(error);
-        }
-      );
+  const mensaje_pines = pins.map((p) => `${p.descripcion}: ${p.pin}`).join("\n");
+  const templateParams = {
+    cliente_cuit: cliente.cuit,
+    cliente_razon_social: cliente.razonSocial,
+    transferencia_numero: transferencia.numero,
+    transferencia_monto: transferencia.monto,
+    mensaje_pines,
+    to_email: cliente.email,  // Esto debe coincidir con el placeholder {{to_email}} en plantilla
+    subject: "Entrega de PINes y Factura - CERA",
   };
+
+  emailjs
+    .send(
+      "service_xled59w",
+      "template_aa8945a",
+      templateParams,
+      "M88IV6dUU6NMq6Ood"
+    )
+    .then(
+      (result) => {
+        alert("Email enviado correctamente");
+      },
+      (error) => {
+        alert("Error al enviar el email");
+        console.error(error);
+      }
+    );
+};
 
   const puedeGenerar = () => {
     return (
