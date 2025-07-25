@@ -75,7 +75,14 @@ export default function App() {
   }, [transferencia.monto, totalGeneral]);
 
   // Generar PIN
-  const generarPIN = () => uuidv4().toUpperCase().slice(0, 19);
+  const generarPIN = () => {
+  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
+  let pin = '';
+  for (let i = 0; i < 16; i++) {
+    pin += chars.charAt(Math.floor(Math.random() * chars.length));
+  }
+  return pin.match(/.{1,4}/g).join('-');
+};
 
   // Generar factura: PDF y enviar email
   const generarFactura = () => {
@@ -116,25 +123,33 @@ export default function App() {
   };
 
   // Función para enviar email con EmailJS
-  const enviarEmail = (datos) => {
-    const mensaje = datos.map((d) => `${d.descripcion}: ${d.pin}`).join("\n");
-    const params = {
-      cliente_cuit: cliente.cuit,
-      cliente_razon_social: cliente.razonSocial,
-      transferencia_numero: transferencia.numero,
-      transferencia_monto: transferencia.monto,
-      mensaje_pines: mensaje,
-      email: cliente.email,
-      subject: "Entrega de PINes y Factura - CERA",
-    };
-    emailjs
-      .send("service_xled59w", "template_aa8945a", params, "M88IV6dUU6NMq6Ood")
-      .then(() => alert("Email enviado correctamente"))
-      .catch((err) => {
-        alert("Error al enviar");
-        console.error(err);
-      });
+  const enviarEmail = (pins) => {
+  // Armar lista HTML con los pins
+  const mensaje_pines_html = pins
+    .map(
+      (p) =>
+        `<li><strong>${p.descripcion}:</strong> <code style="background:#f0f0f0; padding:2px 5px; border-radius:3px;">${p.pin}</code></li>`
+    )
+    .join("");
+
+  const templateParams = {
+    cliente_cuit: cliente.cuit,
+    cliente_razon_social: cliente.razonSocial,
+    transferencia_numero: transferencia.numero,
+    transferencia_monto: transferencia.monto,
+    mensaje_pines_html,  // aquí metemos el HTML
+    email: cliente.email,
+    subject: "Entrega de PINes y Factura - CERA",
   };
+
+  emailjs
+    .send("service_xled59w", "template_aa8945a", templateParams, "M88IV6dUU6NMq6Ood")
+    .then(() => alert("Email enviado correctamente"))
+    .catch((err) => {
+      alert("Error al enviar");
+      console.error(err);
+    });
+};
 
   // Estilos inline usados
   const estilos = {
