@@ -99,19 +99,21 @@ const App = () => {
   };
 
   const enviarEmail = (pins) => {
+    const mensaje_pines = pins.map((p) => `${p.descripcion}: ${p.pin}`).join("\n");
     const templateParams = {
-      to_name: cliente.razonSocial,
-      cuit: cliente.cuit,
+      cliente_cuit: cliente.cuit,
+      cliente_razon_social: cliente.razonSocial,
       transferencia_numero: transferencia.numero,
       transferencia_monto: transferencia.monto,
-      message: pins.map((p) => `${p.descripcion}: ${p.pin}`).join("\n"),
+      mensaje_pines,
+      to_email: cliente.email,
       subject: "Entrega de PINes y Factura - CERA",
     };
 
     emailjs
       .send(
         "service_xled59w",
-        "template_9hx4o7l",
+        "template_aa8945a",
         templateParams,
         "RH1me9Ql_pWDTGpXg"
       )
@@ -173,9 +175,7 @@ const App = () => {
             type="number"
             min="0"
             value={extras[p.id].cantidad}
-            onChange={(e) =>
-              handleExtraChange(p.id, "cantidad", e.target.value)
-            }
+            onChange={(e) => handleExtraChange(p.id, "cantidad", e.target.value)}
           />{" "}
           Precio unitario:{" "}
           <input
@@ -198,9 +198,7 @@ const App = () => {
       <input
         type="text"
         value={cliente.razonSocial}
-        onChange={(e) =>
-          setCliente({ ...cliente, razonSocial: e.target.value })
-        }
+        onChange={(e) => setCliente({ ...cliente, razonSocial: e.target.value })}
       />
       <br />
       Email:{" "}
@@ -214,18 +212,14 @@ const App = () => {
       <input
         type="text"
         value={transferencia.numero}
-        onChange={(e) =>
-          setTransferencia({ ...transferencia, numero: e.target.value })
-        }
+        onChange={(e) => setTransferencia({ ...transferencia, numero: e.target.value })}
       />
       <br />
       Importe recibido:{" "}
       <input
         type="number"
         value={transferencia.monto}
-        onChange={(e) =>
-          setTransferencia({ ...transferencia, monto: e.target.value })
-        }
+        onChange={(e) => setTransferencia({ ...transferencia, monto: e.target.value })}
       />
       <br />
       <br />
