@@ -19,7 +19,7 @@ export default function ClienteSelector2({ onSelect }) {
       setError("");
       try {
         // Ruta única desde /public
-        const data = await tryFetch("/data/clientes.json");
+        const data = await tryFetch("data/clientes.json");
         if (!Array.isArray(data))
           throw new Error("El JSON debe ser un array []");
         if (!abort) setClientes(data);
