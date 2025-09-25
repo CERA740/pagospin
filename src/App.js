@@ -1,4 +1,5 @@
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useMemo } from "react";
+import ClienteSelector from "./components/ClienteSelector2";
 import { v4 as uuidv4 } from "uuid";
 import emailjs from "@emailjs/browser";
 import pdfMake from "pdfmake/build/pdfmake";
@@ -26,7 +27,7 @@ export default function App() {
     )
   );
 
-  const [cliente, setCliente] = useState({ cuit: "", razonSocial: "", email: "" });
+  const [cliente, setCliente] = useState({ cuit: "", razonSocial: "", email: "", condicion: "" });
   const [transferencia, setTransferencia] = useState({ numero: "", monto: "" });
   const [pins, setPins] = useState([]);
   const [errorMonto, setErrorMonto] = useState("");
@@ -362,3 +363,4 @@ export default function App() {
     </div>
   );
 }
+
