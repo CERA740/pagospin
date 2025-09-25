@@ -18,39 +18,12 @@ export default function ClienteSelector2({ onSelect }) {
       setLoading(true);
       setError("");
       try {
-        // Intento 1: raíz (lo normal en CRA/CodeSandbox)
-        let data;
-        const tries = [
-          "/data/clientes.json",
-          "./data/clientes.json",
-          process?.env?.PUBLIC_URL
-            ? `${process.env.PUBLIC_URL}/data/clientes.json`
-            : null,
-        ].filter(Boolean);
-
-        let lastErr;
-        for (const url of tries) {
-          try {
-            console.log("[fetch] intentando:", url);
-            data = await tryFetch(url);
-            break;
-          } catch (e) {
-            lastErr = e;
-            console.warn("[fetch] fallo:", e.message);
-          }
-        }
-        if (!data)
-          throw lastErr || new Error("No se pudo cargar clientes.json");
-
-        if (!Array.isArray(data)) {
-          console.error("Tipo recibido:", typeof data, data);
+        // Ruta única desde /public
+        const data = await tryFetch("/data/clientes.json");
+        if (!Array.isArray(data))
           throw new Error("El JSON debe ser un array []");
-        }
-
-        if (!abort) {
-          setClientes(data);
-          console.log(`[fetch] OK, registros: ${data.length}`);
-        }
+        if (!abort) setClientes(data);
+        console.log(`[fetch] OK, registros: ${data.length}`);
       } catch (e) {
         if (!abort) setError(String(e.message || e));
       } finally {
@@ -64,16 +37,14 @@ export default function ClienteSelector2({ onSelect }) {
 
   const filtrados = useMemo(() => {
     const needle = q.trim().toLowerCase();
-    if (!needle) return clientes.slice(0, 50);
+    if (!needle) return clientes.slice(0, 50); // muestra algunos por defecto
     return clientes
-      .filter(
-        (c) =>
-          c.RazonSocial?.toLowerCase().includes(needle) ||
-          String(c.CUIT || "")
-            .toLowerCase()
-            .includes(needle)
-      )
-      .slice(0, 200);
+      .filter((c) => {
+        const rs = c.RazonSocial ? String(c.RazonSocial).toLowerCase() : "";
+        const cuit = String(c.CUIT ?? "").toLowerCase();
+        return rs.includes(needle) || cuit.includes(needle);
+      })
+      .slice(0, 200); // límite para no congelar el render
   }, [clientes, q]);
 
   return (
