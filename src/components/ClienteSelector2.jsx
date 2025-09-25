@@ -1,9 +1,10 @@
 import React, { useEffect, useMemo, useState } from "react";
 
-const norm = (s) => s?.toString() ?? "";
-const strip = (s) => norm(s).normalize("NFD").replace(/\p{Diacritic}/gu, "").toLowerCase();
-const onlyDigits = (s) => norm(s).replace(/\D/g, "");
-const matchNombre = (a, b) => strip(a).includes(strip(b));
+async function tryFetch(url) {
+  const r = await fetch(url, { cache: "no-store" });
+  if (!r.ok) throw new Error(`HTTP ${r.status} al pedir ${url}`);
+  return r.json();
+}
 
 export default function ClienteSelector2({ onSelect }) {
   const [clientes, setClientes] = useState([]);
