@@ -1,1 +1,26 @@
-
+[
+  {
+    "CUIT": "33-55438074-9",
+    "RazonSocial": "ANDREOLI S.A.",
+    "CondicionCliente": "No Socio",
+    "Estado": "Habilitado"
+  },
+  {
+    "CUIT": "30-62935878-9",
+    "RazonSocial": "JONSON SRL",
+    "CondicionCliente": "No Socio",
+    "Estado": "Bloqueado"
+  },
+  {
+    "CUIT": "30-71550618-8",
+    "RazonSocial": "16 OUNCES BREWERY S.R.L.",
+    "CondicionCliente": "No Socio",
+    "Estado": "Habilitado"
+  },
+  {
+    "CUIT": "30-71509960-4",
+    "RazonSocial": "2001 LETREROS SRL",
+    "CondicionCliente": "No Socio",
+    "Estado": "Habilitado"
+  }
+]
