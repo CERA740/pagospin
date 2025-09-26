@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from "react";
-import { v4 as uuidv4 } from "uuid";
+import ClienteSelector2 from "./components/ClienteSelector2";
 import emailjs from "@emailjs/browser";
 import pdfMake from "pdfmake/build/pdfmake";
 import pdfFonts from "pdfmake/build/vfs_fonts";
@@ -26,10 +26,29 @@ export default function App() {
     )
   );
 
-  const [cliente, setCliente] = useState({ cuit: "", razonSocial: "", email: "" });
+  const [cliente, setCliente] = useState({
+    cuit: "",
+    razonSocial: "",
+    email: "",
+    condicion: "",
+  });
   const [transferencia, setTransferencia] = useState({ numero: "", monto: "" });
   const [pins, setPins] = useState([]);
   const [errorMonto, setErrorMonto] = useState("");
+
+  // Mostrar/ocultar padrón
+  const [mostrarSelector, setMostrarSelector] = useState(false);
+
+  // Al elegir del padrón
+  const handleSeleccionCliente = (c) => {
+    setCliente((prev) => ({
+      ...prev,
+      cuit: String(c.CUIT ?? ""),
+      razonSocial: c.RazonSocial ?? "",
+      condicion: c.CondicionCliente ?? "",
+    }));
+    setMostrarSelector(false);
+  };
 
   // Calcular totales con subtotales fijo y extra
   const calcularTotales = () =>
@@ -76,13 +95,14 @@ export default function App() {
 
   // Generar PIN
   const generarPIN = () => {
-  const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789';
-  let pin = '';
-  for (let i = 0; i < 16; i++) {
-    pin += chars.charAt(Math.floor(Math.random() * chars.length));
-  }
-  return pin.match(/.{1,4}/g).join('-');
-};
+    const chars =
+      "ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789";
+    let pin = "";
+    for (let i = 0; i < 16; i++) {
+      pin += chars.charAt(Math.floor(Math.random() * chars.length));
+    }
+    return pin.match(/.{1,4}/g).join("-");
+  };
 
   // Generar factura: PDF y enviar email
   const generarFactura = () => {
@@ -101,7 +121,9 @@ export default function App() {
       content: [
         { text: "Factura por Compra de PINes", style: "header" },
         {
-          text: `Cliente: ${cliente.razonSocial} | CUIT: ${cliente.cuit}\nTransferencia Nº: ${transferencia.numero} | Monto: $${transferencia.monto}`,
+          text: `Cliente: ${cliente.razonSocial} | CUIT: ${cliente.cuit}${
+            cliente.condicion ? ` | Condición: ${cliente.condicion}` : ""
+          }\nTransferencia Nº: ${transferencia.numero} | Monto: $${transferencia.monto}`,
           margin: [0, 10],
         },
         {
@@ -122,34 +144,38 @@ export default function App() {
     enviarEmail(detalle);
   };
 
-  // Función para enviar email con EmailJS
+  // Enviar email con EmailJS
   const enviarEmail = (pins) => {
-  // Armar lista HTML con los pins
-  const mensaje_pines_html = pins
-    .map(
-      (p) =>
-        `<li><strong>${p.descripcion}:</strong> <code style="background:#f0f0f0; padding:2px 5px; border-radius:3px;">${p.pin}</code></li>`
-    )
-    .join("");
+    const mensaje_pines_html = pins
+      .map(
+        (p) =>
+          `<li><strong>${p.descripcion}:</strong> <code style="background:#f0f0f0; padding:2px 5px; border-radius:3px;">${p.pin}</code></li>`
+      )
+      .join("");
 
-  const templateParams = {
-    cliente_cuit: cliente.cuit,
-    cliente_razon_social: cliente.razonSocial,
-    transferencia_numero: transferencia.numero,
-    transferencia_monto: transferencia.monto,
-    mensaje_pines_html,  // aquí metemos el HTML
-    email: cliente.email,
-    subject: "Entrega de PINes y Factura - CERA",
+    const templateParams = {
+      cliente_cuit: cliente.cuit,
+      cliente_razon_social: cliente.razonSocial,
+      transferencia_numero: transferencia.numero,
+      transferencia_monto: transferencia.monto,
+      mensaje_pines_html,
+      email: cliente.email,
+      subject: "Entrega de PINes y Factura - CERA",
+    };
+
+    emailjs
+      .send(
+        "service_xled59w",
+        "template_aa8945a",
+        templateParams,
+        "M88IV6dUU6NMq6Ood"
+      )
+      .then(() => alert("Email enviado correctamente"))
+      .catch((err) => {
+        alert("Error al enviar");
+        console.error(err);
+      });
   };
-
-  emailjs
-    .send("service_xled59w", "template_aa8945a", templateParams, "M88IV6dUU6NMq6Ood")
-    .then(() => alert("Email enviado correctamente"))
-    .catch((err) => {
-      alert("Error al enviar");
-      console.error(err);
-    });
-};
 
   // Estilos inline usados
   const estilos = {
@@ -188,8 +214,9 @@ export default function App() {
 
   return (
     <div style={estilos.contenedor}>
-      <h2 style={{ textAlign: "center" }}>CERA ‑ Generador de PINes y Factura</h2>
+      <h2 style={{ textAlign: "center" }}>CERA - Generador de PINes y Factura</h2>
 
+      {/* Productos */}
       <div style={estilos.seccion}>
         <h3>Productos</h3>
         {productos.map((p) => {
@@ -279,6 +306,28 @@ export default function App() {
       {/* Datos del cliente */}
       <div style={estilos.seccion}>
         <h3>Datos del Cliente</h3>
+
+        <button
+          type="button"
+          onClick={() => setMostrarSelector((v) => !v)}
+          style={{ ...estilos.boton, marginBottom: "0.75rem" }}
+        >
+          {mostrarSelector ? "Cerrar padrón de clientes" : "Buscar en padrón de clientes"}
+        </button>
+
+        {mostrarSelector && (
+          <div
+            style={{
+              marginBottom: "1rem",
+              border: "1px dashed #a80000",
+              borderRadius: 6,
+              padding: 8,
+            }}
+          >
+            <ClienteSelector2 onSelect={handleSeleccionCliente} />
+          </div>
+        )}
+
         <label style={estilos.label}>CUIT</label>
         <input
           style={estilos.input}
@@ -319,9 +368,7 @@ export default function App() {
           value={transferencia.monto}
           onChange={(e) => setTransferencia({ ...transferencia, monto: e.target.value })}
         />
-        {errorMonto && (
-          <p style={{ color: "red", fontWeight: "700" }}>{errorMonto}</p>
-        )}
+        {errorMonto && <p style={{ color: "red", fontWeight: "700" }}>{errorMonto}</p>}
       </div>
 
       {/* Botón generar */}
@@ -351,10 +398,8 @@ export default function App() {
         >
           <h3 style={{ textAlign: "center" }}>PINes Generados</h3>
           <ul>
-            {pins.map((p) => (
-              <li key={p.id}>
-                {p.descripcion}: {p.pin}
-              </li>
+            {pins.map((p, idx) => (
+              <li key={`${p.descripcion}-${idx}`}>{p.descripcion}: {p.pin}</li>
             ))}
           </ul>
         </div>
