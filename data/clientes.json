@@ -1,4 +1,3 @@
-[
  {
    "CUIT": 33554380749,
    "RazonSocial": "ANDREOLI S.A.",
@@ -42509,10 +42508,5 @@
    "CondicionCliente": "No Socio",
    "Estado": "Habilitado"
  }
-]
-    "CUIT": "30-71509960-4",
-    "RazonSocial": "2001 LETREROS SRL",
-    "CondicionCliente": "No Socio",
-    "Estado": "Habilitado"
-  }
-]
+
+  
