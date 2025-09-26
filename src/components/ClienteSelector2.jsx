@@ -18,7 +18,9 @@ export default function ClienteSelector2({ onSelect }) {
       setLoading(true);
       setError("");
       try {
-        const data = await tryFetch("data/clientes.json");
+        // ✅ Ruta robusta, sirve en dev y en GitHub Pages
+        const url = `${process.env.PUBLIC_URL}/data/clientes.json?v=${Date.now()}`;
+        const data = await tryFetch(url);
         if (!Array.isArray(data)) throw new Error("El JSON debe ser un array []");
         if (!abort) setClientes(data);
         console.log(`[fetch] OK, registros: ${data.length}`);
@@ -65,23 +67,28 @@ export default function ClienteSelector2({ onSelect }) {
       )}
 
       <ul className="space-y-1 max-h-80 overflow-auto">
-        {filtrados.map((c) => (
-          <li
-            key={String(c.CUIT)}
-            className={`p-2 border rounded cursor-pointer ${
-              c.Estado === "Bloqueado"
-                ? "opacity-50 pointer-events-none"
-                : "hover:bg-gray-100"
-            }`}
-            onClick={() => c.Estado !== "Bloqueado" && onSelect?.(c)}
-            title={c.Estado === "Bloqueado" ? "Cliente bloqueado" : "Seleccionar cliente"}
-          >
-            <div className="font-medium">{c.RazonSocial}</div>
-            <div className="text-sm opacity-70">
-              CUIT: {c.CUIT} · {c.CondicionCliente} · {c.Estado}
-            </div>
-          </li>
-        ))}
+        {filtrados.map((c) => {
+          // ✅ Socio = verde; cualquier otro (incluye "No Socio") = rojo
+          const cond = String(c.CondicionCliente || "").trim().toLowerCase();
+          const esSocio = cond === "socio";
+          return (
+            <li
+              key={String(c.CUIT)}
+              className={`p-2 border rounded cursor-pointer ${
+                c.Estado === "Bloqueado"
+                  ? "opacity-50 pointer-events-none"
+                  : "hover:bg-gray-100"
+              } ${esSocio ? "text-green-700" : "text-red-600"}`}
+              onClick={() => c.Estado !== "Bloqueado" && onSelect?.(c)}
+              title={c.Estado === "Bloqueado" ? "Cliente bloqueado" : "Seleccionar cliente"}
+            >
+              <div className="font-medium">{c.RazonSocial}</div>
+              <div className="text-sm opacity-70">
+                CUIT: {c.CUIT} · {c.CondicionCliente} · {c.Estado}
+              </div>
+            </li>
+          );
+        })}
       </ul>
     </div>
   );
